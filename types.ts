@@ -23,7 +23,14 @@ export enum EndingType {
   Bad2 = 'BAD2'
 }
 
+export enum GamePhase {
+  Title = 'TITLE',
+  Story = 'STORY',
+  Playing = 'PLAYING'
+}
+
 export interface GameState {
+  phase: GamePhase;
   currentScene: SceneId;
   inventory: ItemId[];
   isLaptopLocked: boolean;
