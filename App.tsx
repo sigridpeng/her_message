@@ -185,14 +185,14 @@ const App: React.FC = () => {
         <audio ref={audioRef} src="/bgm.mp3" autoPlay loop />
         {/* Background Ring */}
         <div
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[3000ms] ease-in-out pointer-events-none`}
+          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[4000ms] ease-in-out pointer-events-none`}
           style={{
             backgroundImage: "url('/ring.png')",
-            opacity: storyStep >= storyLines.length ? 0.3 : 0
+            opacity: storyStep >= storyLines.length ? 0.4 : 0
           }}
         />
 
-        <div className="max-w-2xl w-full flex flex-col items-center space-y-12 relative z-10">
+        <div className="max-w-2xl w-full flex flex-col items-center space-y-12 relative z-10 text-center">
           {storyLines.map((line, idx) => (
             <p
               key={idx}
@@ -202,10 +202,10 @@ const App: React.FC = () => {
             </p>
           ))}
 
-          <div className={`transition-all duration-1000 w-full flex flex-col items-center ${storyStep >= storyLines.length ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className={`transition-all duration-1000 w-full flex flex-col items-center ${storyStep >= storyLines.length ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
             <button
               onClick={startPlaying}
-              className="mt-12 px-12 py-4 bg-slate-900 text-white rounded-full font-bold tracking-widest hover:bg-slate-800 transition-all uppercase text-sm border-2 border-slate-700 shadow-2xl"
+              className="mt-12 px-12 py-4 bg-white text-slate-800 rounded-full font-bold tracking-widest hover:bg-slate-50 transition-all uppercase text-sm border-2 border-slate-200 shadow-xl"
             >
               進入房間
             </button>
@@ -235,18 +235,18 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-screen bg-slate-950 relative overflow-hidden text-slate-100">
+    <div className="h-screen w-screen bg-white relative overflow-hidden text-slate-900">
       <audio ref={audioRef} src="/bgm.mp3" autoPlay loop />
-      <div className="absolute top-0 left-0 right-0 p-4 text-center bg-gradient-to-b from-slate-900/80 to-transparent z-10 pointer-events-none">
-        <h1 className="text-xl font-black tracking-[0.4em] text-rose-300 uppercase italic drop-shadow-lg">
+      <div className="absolute top-0 left-0 right-0 p-6 text-center bg-gradient-to-b from-white/90 to-transparent z-10 pointer-events-none">
+        <h1 className="text-xl font-black tracking-[0.4em] text-orange-800 uppercase italic drop-shadow-sm">
           {state.currentScene === SceneId.Entrance && 'Room Entrance'}
           {state.currentScene === SceneId.Desk && 'The Workspace'}
           {state.currentScene === SceneId.Bed && 'Bedroom Corner'}
           {state.currentScene === SceneId.Bathroom && 'Bathroom Side'}
         </h1>
       </div>
-      <div className="h-full w-full relative flex items-center justify-center">
-        <button onClick={() => changeScene('prev')} className="absolute left-6 z-20 p-5 rounded-full bg-slate-900/40 text-white hover:bg-rose-500/40 transition-all border border-white/5 backdrop-blur-sm">
+      <div className="h-full w-full relative flex items-center justify-center bg-slate-50">
+        <button onClick={() => changeScene('prev')} className="absolute left-6 z-20 p-5 rounded-full bg-white/60 text-slate-800 hover:bg-orange-100/60 transition-all border border-slate-200 backdrop-blur-sm shadow-md">
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" /></svg>
         </button>
         <SceneRenderer
@@ -254,7 +254,7 @@ const App: React.FC = () => {
           imageUrl={STATIC_SCENES[state.currentScene]}
           onInteract={handleObjectInteraction}
         />
-        <button onClick={() => changeScene('next')} className="absolute right-6 z-20 p-5 rounded-full bg-slate-900/40 text-white hover:bg-rose-500/40 transition-all border border-white/5 backdrop-blur-sm">
+        <button onClick={() => changeScene('next')} className="absolute right-6 z-20 p-5 rounded-full bg-white/60 text-slate-800 hover:bg-orange-100/60 transition-all border border-slate-200 backdrop-blur-sm shadow-md">
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
         </button>
       </div>

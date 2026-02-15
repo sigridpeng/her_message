@@ -9,26 +9,26 @@ interface MessageOverlayProps {
 
 const MessageOverlay: React.FC<MessageOverlayProps> = ({ title, content, onClose }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-8 bg-slate-950/40 backdrop-blur-[2px]" onClick={onClose}>
-      <div 
-        className="w-full max-w-4xl bg-slate-900/90 border-t-4 border-rose-400/50 p-8 rounded-t-xl shadow-2xl transform animate-in slide-in-from-bottom-8 duration-300"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="flex items-center mb-4">
-          <div className="px-6 py-1 bg-rose-500 text-slate-950 font-black text-sm rounded-sm mr-4 tracking-tighter">
-            {title}
-          </div>
-          <div className="h-[1px] flex-1 bg-slate-700"></div>
-        </div>
-        <p className="text-white text-lg font-medium leading-loose mb-6 italic">
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-8 pb-32 bg-white/20 backdrop-blur-[2px] pointer-events-none animate-in fade-in duration-500">
+      <div className="max-w-2xl w-full glass-panel p-8 rounded-[2rem] border-2 border-white/60 bg-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.1)] pointer-events-auto relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors p-2"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+        <h3 className="text-xs font-black text-rose-500 mb-3 tracking-[0.4em] uppercase italic">
+          — {title} —
+        </h3>
+        <p className="text-slate-700 text-base leading-relaxed font-bold tracking-wide italic whitespace-pre-wrap">
           {content}
         </p>
-        <div className="flex justify-end">
-          <button 
+        <div className="mt-6 flex justify-end">
+          <button
             onClick={onClose}
-            className="text-rose-300 font-black text-xs tracking-widest animate-pulse hover:text-white transition-colors"
+            className="text-[10px] font-black text-slate-400 hover:text-rose-500 transition-colors tracking-widest uppercase flex items-center group"
           >
-            CONTINUE ...
+            CONTINUE <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
           </button>
         </div>
       </div>
