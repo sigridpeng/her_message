@@ -1,5 +1,5 @@
 
-export type ItemId = 'room_key' | 'memory_usb' | 'handwritten_note' | 'test_report';
+export type ItemId = 'cabinet_key' | 'heart_key' | 'memory_usb' | 'handwritten_note' | 'test_report' | 'birthday_card' | 'male_shirt';
 
 export interface Item {
   id: ItemId;
@@ -20,7 +20,8 @@ export enum EndingType {
   Normal = 'NORMAL',
   Bad1 = 'BAD1',
   Happy = 'HAPPY',
-  Bad2 = 'BAD2'
+  Bad2 = 'BAD2',
+  Perfect = 'PERFECT'
 }
 
 export enum GamePhase {
@@ -36,7 +37,10 @@ export interface GameState {
   isLaptopLocked: boolean;
   isCabinetLocked: boolean;
   isDoorLocked: boolean;
+  isLaptopFolderLocked: boolean;
+  isNightstandLocked: boolean;
   ending: EndingType;
   hasSeenCalendar: boolean;
+  hasSeenChat: boolean;
   selectedItem: ItemId | null;
 }

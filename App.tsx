@@ -8,6 +8,7 @@ import MessageOverlay from './components/MessageOverlay';
 import CodeLockModal from './components/CodeLockModal';
 import ChoiceOverlay from './components/ChoiceOverlay';
 import ItemDetailModal from './components/ItemDetailModal';
+import LaptopModal from './components/LaptopModal';
 
 const STATIC_SCENES: Record<SceneId, string> = {
   [SceneId.Entrance]: '/entrance.png',
@@ -24,9 +25,12 @@ const App: React.FC = () => {
     inventory: [],
     isLaptopLocked: true,
     isCabinetLocked: true,
-    isDoorLocked: true,
+    isDoorLocked: false,
+    isLaptopFolderLocked: true,
+    isNightstandLocked: true,
     ending: EndingType.None,
     hasSeenCalendar: false,
+    hasSeenChat: false,
     selectedItem: null,
   });
 
@@ -66,6 +70,8 @@ const App: React.FC = () => {
   const [selectedExamineItem, setSelectedExamineItem] = useState<ItemId | null>(null);
   const [isCodeLockOpen, setIsCodeLockOpen] = useState(false);
   const [isChoiceOpen, setIsChoiceOpen] = useState(false);
+  const [isLaptopOpen, setIsLaptopOpen] = useState(false);
+  const [isNightstandLockOpen, setIsNightstandLockOpen] = useState(false);
 
   const resetGameProgress = () => {
     setState({
@@ -74,14 +80,19 @@ const App: React.FC = () => {
       inventory: [],
       isLaptopLocked: true,
       isCabinetLocked: true,
-      isDoorLocked: true,
+      isDoorLocked: false,
+      isLaptopFolderLocked: true,
+      isNightstandLocked: true,
       ending: EndingType.None,
       hasSeenCalendar: false,
+      hasSeenChat: false,
       selectedItem: null,
     });
     setStoryStep(0);
     setIsChoiceOpen(false);
     setIsCodeLockOpen(false);
+    setIsLaptopOpen(false);
+    setIsNightstandLockOpen(false);
   };
 
   const changeScene = (direction: 'next' | 'prev') => {
@@ -94,31 +105,32 @@ const App: React.FC = () => {
   const handleObjectInteraction = (objectId: string) => {
     switch (objectId) {
       case 'main_door':
-        if (state.isDoorLocked) {
-          if (state.selectedItem === 'room_key') {
-            setState(prev => ({ ...prev, isDoorLocked: false }));
-            setMessage({ title: '解鎖成功', content: '用備用鑰匙打開了房門。' });
-          } else {
-            setMessage({ title: '房門', content: '門鎖住了，或許鑰匙就在附近。' });
-          }
-        } else {
-          setIsChoiceOpen(true);
-        }
+        setIsChoiceOpen(true);
         break;
       case 'sofa': setMessage({ title: '沙發', content: '舒服的沙發，是她省錢了好一陣子才買下手的。' }); break;
-      case 'plant':
-        if (!state.inventory.includes('room_key')) {
-          setState(prev => ({ ...prev, inventory: [...prev.inventory, 'room_key'] }));
-          setMessage({ title: '獲得碎片', content: '【備用鑰匙】\n藏在盆栽底下的鑰匙。' });
+      case 'window': setMessage({ title: '窗戶', content: '從這裡可以看到外面的街道，但現在只有灰濛濛的天空。' }); break;
+      case 'plant1':
+        if (!state.inventory.includes('cabinet_key')) {
+          setState(prev => ({ ...prev, inventory: [...prev.inventory, 'cabinet_key'] }));
+          setMessage({ title: '獲得碎片', content: '【矮櫃鑰匙】\n藏在盆栽底下的鑰匙。' });
         } else {
           setMessage({ title: '盆栽', content: '葉片還帶著淡淡的水氣。' });
         }
         break;
       case 'cabinet':
         if (state.isCabinetLocked) {
-          setMessage({ title: '矮櫃', content: '矮櫃上鎖了，似乎需要鑰匙（但我沒設計矮櫃鑰匙，所以這裡先略過）。' });
+          if (state.selectedItem === 'cabinet_key') {
+            setState(prev => ({
+              ...prev,
+              isCabinetLocked: false,
+              inventory: [...prev.inventory, 'heart_key']
+            }));
+            setMessage({ title: '解鎖成功', content: '用鑰匙打開了矮櫃，在抽屜夾層發現了【心形小鑰匙】。' });
+          } else {
+            setMessage({ title: '矮櫃', content: '門鎖住了，似乎需要特定的鑰匙。' });
+          }
         } else {
-          setMessage({ title: '矮櫃', content: '裡面整齊地疊著她的衣物。' });
+          setMessage({ title: '矮櫃', content: '裡面整齊地疊著她的衣物，散發著淡淡的香氛。' });
         }
         break;
       case 'calendar':
@@ -132,15 +144,7 @@ const App: React.FC = () => {
         if (state.isLaptopLocked) {
           setIsCodeLockOpen(true);
         } else {
-          if (state.selectedItem === 'memory_usb') {
-            setMessage({ title: '記憶隨身碟', content: '讀取了隨身碟。螢幕上顯示著她寄給未來的信...原來她一直都在對抗病魔。' });
-            if (!state.inventory.includes('test_report') && state.hasSeenCalendar) {
-              // Hinting at the test report if not already found
-              setMessage({ title: '筆記型電腦', content: '隨身碟裡的文件提到了醫院的「檢驗報告」。' });
-            }
-          } else {
-            setMessage({ title: '筆記型電腦', content: '螢幕上的草稿寫著關於未來的秘密。或許該插入隨身碟讀取更多資料。' });
-          }
+          setIsLaptopOpen(true);
         }
         break;
       case 'bookshelf':
@@ -149,7 +153,40 @@ const App: React.FC = () => {
           setMessage({ title: '獲得碎片', content: '【記憶隨身碟】\n夾在書頁間的隨身碟。' });
         } else setMessage({ title: '書櫃', content: '滿滿的書，記錄著這裡的時光。' });
         break;
+      case 'drawer':
+        if (!state.inventory.includes('birthday_card')) {
+          setState(prev => ({ ...prev, inventory: [...prev.inventory, 'birthday_card'] }));
+          setMessage({ title: '獲得碎片', content: '【生日卡片】\n抽屜裡放著一張精緻的卡片。' });
+        } else {
+          setMessage({ title: '抽屜', content: '抽屜裡裝滿了文具和雜物，還有一疊沒寄出的信。' });
+        }
+        break;
+      case 'dairy':
+        if (!state.inventory.includes('test_report')) {
+          if (state.selectedItem === 'heart_key') {
+            setState(prev => ({ ...prev, inventory: [...prev.inventory, 'test_report'] }));
+            setMessage({ title: '解鎖成功', content: '用心形小鑰匙打開了日記本，裡面夾著一張【檢驗報告單】。' });
+          } else {
+            setMessage({ title: '日記本', content: '精緻的日記本，封面上嵌著一個心形的鎖孔。' });
+          }
+        } else {
+          setMessage({ title: '日記本', content: '最後的一頁日期停在昨天，上面寫著：「我不想讓你看到我虛弱的樣子。」' });
+        }
+        break;
+      case 'bed': setMessage({ title: '床', content: '床鋪整理得很整齊，像是她隨時會回來睡下。' }); break;
       case 'photo': setMessage({ title: '合照', content: '那張照片裡，我們都笑得好燦爛。' }); break;
+      case 'nightstand':
+        if (state.isNightstandLocked) {
+          setIsNightstandLockOpen(true);
+        } else if (!state.inventory.includes('male_shirt')) {
+          setState(prev => ({ ...prev, inventory: [...prev.inventory, 'male_shirt'] }));
+          setMessage({ title: '獲得碎片', content: '【男用襯衫】\n床頭櫃解開了，裡面靜靜躺著這件襯衫。' });
+        } else {
+          setMessage({ title: '床頭櫃', content: '櫃面上放著一杯喝了一半的水，和幾顆感冒藥。' });
+        }
+        break;
+      case 'bathroom_door': setMessage({ title: '浴室門', content: '鏡子蒙上了一層水蒸氣，似乎有人剛離開。' }); break;
+      case 'movie_poster': setMessage({ title: '電影海報', content: '那是我們第一次約會看的電影，她一直把海報貼在牆上。' }); break;
       case 'scale': setMessage({ title: '體重計', content: '妳總說自己重了，但在我心裡妳一直都很完美。' }); break;
       case 'switch': setMessage({ title: '開關', content: '清脆的聲音在靜謐的房間迴盪。' }); break;
     }
@@ -221,6 +258,7 @@ const App: React.FC = () => {
       [EndingType.Bad1]: { title: 'BAD END 1', text: '我不該在那裡見到妳。信任的裂痕終究無法修補。', icon: '🌑' },
       [EndingType.Happy]: { title: 'HAPPY END', text: '在醫院的門口，我抱住了疲憊的妳。這一次，我們一起面對。', icon: '🌸' },
       [EndingType.Bad2]: { title: 'BAD END 2', text: '留下信的那刻，我以為我解脫了。', icon: '🍂' },
+      [EndingType.Perfect]: { title: 'PERFECT END', text: '穿著妳送我的襯衫，我在病房牽起妳的手。不論未來如何，這次我們不再分開。', icon: '✨' },
     };
     const ending = endings[state.ending as keyof typeof endings];
     return (
@@ -280,10 +318,40 @@ const App: React.FC = () => {
       {isChoiceOpen && (
         <ChoiceOverlay
           hasTestReport={state.inventory.includes('test_report')}
+          hasMaleShirt={state.inventory.includes('male_shirt')}
+          hasSeenChat={state.hasSeenChat}
+          selectedItem={state.selectedItem}
           onChoice={(ending) => {
             if (ending === EndingType.None) setIsChoiceOpen(false);
             else setState(prev => ({ ...prev, ending }));
           }}
+        />
+      )}
+      {isLaptopOpen && (
+        <LaptopModal
+          isLocked={state.isLaptopFolderLocked}
+          onUnlockFolder={(pass) => {
+            if (pass.toLowerCase() === 'kael') {
+              setState(prev => ({ ...prev, isLaptopFolderLocked: false }));
+              setMessage({ title: '存取成功', content: '資料夾解鎖了。' });
+            } else {
+              setMessage({ title: '存取拒絕', content: '這不是管理員的名字。' });
+            }
+          }}
+          onViewChat={() => setState(prev => ({ ...prev, hasSeenChat: true }))}
+          onClose={() => setIsLaptopOpen(false)}
+        />
+      )}
+      {isNightstandLockOpen && (
+        <CodeLockModal
+          onUnlock={(code) => {
+            if (code === '1225') {
+              setState(prev => ({ ...prev, isNightstandLocked: false }));
+              setIsNightstandLockOpen(false);
+              setMessage({ title: '解鎖成功', content: '床頭櫃解鎖了，妳在裡面放了給我的禮物...' });
+            } else setMessage({ title: '密碼錯誤', content: '密碼不正確。' });
+          }}
+          onClose={() => setIsNightstandLockOpen(false)}
         />
       )}
       {selectedExamineItem && (
