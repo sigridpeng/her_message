@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image Debug Test</title>
+</head>
+
+<body style="background:#000;color:#fff;font-family:sans-serif;padding:20px;">
+    <h1>Image Loading Test</h1>
+    <p>If images appear below, they are valid. If not, the files are corrupt.</p>
+
+    <h2>entrance.png</h2>
+    <img src="/entrance.png" style="max-width:400px;border:2px solid red;"
+        onload="this.nextElementSibling.textContent='✅ LOADED OK (' + this.naturalWidth + 'x' + this.naturalHeight + ')'"
+        onerror="this.nextElementSibling.textContent='❌ FAILED TO LOAD'" />
+    <p style="color:yellow;">Loading...</p>
+
+    <h2>desk.png</h2>
+    <img src="/desk.png" style="max-width:400px;border:2px solid red;"
+        onload="this.nextElementSibling.textContent='✅ LOADED OK (' + this.naturalWidth + 'x' + this.naturalHeight + ')'"
+        onerror="this.nextElementSibling.textContent='❌ FAILED TO LOAD'" />
+    <p style="color:yellow;">Loading...</p>
+
+    <h2>bed.png</h2>
+    <img src="/bed.png" style="max-width:400px;border:2px solid red;"
+        onload="this.nextElementSibling.textContent='✅ LOADED OK (' + this.naturalWidth + 'x' + this.naturalHeight + ')'"
+        onerror="this.nextElementSibling.textContent='❌ FAILED TO LOAD'" />
+    <p style="color:yellow;">Loading...</p>
+
+    <h2>bathroom.png</h2>
+    <img src="/bathroom.png" style="max-width:400px;border:2px solid red;"
+        onload="this.nextElementSibling.textContent='✅ LOADED OK (' + this.naturalWidth + 'x' + this.naturalHeight + ')'"
+        onerror="this.nextElementSibling.textContent='❌ FAILED TO LOAD'" />
+    <p style="color:yellow;">Loading...</p>
+</body>
+
+</html>
