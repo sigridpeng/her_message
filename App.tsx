@@ -17,6 +17,8 @@ const STATIC_SCENES: Record<SceneId, string> = {
   [SceneId.Bathroom]: `${import.meta.env.BASE_URL}bathroom.png`,
 };
 
+const SAVE_KEY = 'her_message_save_v1';
+
 const App: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [state, setState] = useState<GameState>({
@@ -36,6 +38,46 @@ const App: React.FC = () => {
   });
 
   const [storyStep, setStoryStep] = useState(0);
+  const [hasSave, setHasSave] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(SAVE_KEY);
+    setHasSave(!!saved);
+  }, []);
+
+  const saveGame = () => {
+    const saveData = {
+      currentScene: state.currentScene,
+      inventory: state.inventory,
+      isLaptopLocked: state.isLaptopLocked,
+      isCabinetLocked: state.isCabinetLocked,
+      isDoorLocked: state.isDoorLocked,
+      isLaptopFolderLocked: state.isLaptopFolderLocked,
+      isNightstandLocked: state.isNightstandLocked,
+      hasSeenCalendar: state.hasSeenCalendar,
+      hasSeenChat: state.hasSeenChat,
+      hasSeenBookshelf: state.hasSeenBookshelf,
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+    setHasSave(true);
+    setMessage({ title: '系統', content: '進度已儲存。' });
+  };
+
+  const loadGame = () => {
+    const saved = localStorage.getItem(SAVE_KEY);
+    if (saved) {
+      const data = JSON.parse(saved);
+      setState(prev => ({
+        ...prev,
+        ...data,
+        phase: GamePhase.Playing,
+        ending: EndingType.None,
+        selectedItem: null,
+      }));
+      setMessage({ title: '系統', content: '已載入上次的回憶。' });
+    }
+  };
+
   const storyLines = [
     "前一晚，我覺得她有事瞞我，所以吵了架...",
     "而第二天，我前往她的住處，發現...",
@@ -76,6 +118,8 @@ const App: React.FC = () => {
   const [isNightstandLockOpen, setIsNightstandLockOpen] = useState(false);
 
   const resetGameProgress = () => {
+    const saved = localStorage.getItem(SAVE_KEY);
+    setHasSave(!!saved);
     setState({
       phase: GamePhase.Title,
       currentScene: SceneId.Entrance,
@@ -240,13 +284,23 @@ const App: React.FC = () => {
             </p>
           ))}
 
-          <div className={`transition-all duration-1000 w-full flex flex-col items-center ${storyStep >= storyLines.length ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
-            <button
-              onClick={startPlaying}
-              className="mt-12 px-12 py-4 bg-white text-slate-800 rounded-full font-bold tracking-widest hover:bg-slate-50 transition-all uppercase text-sm border-2 border-slate-200 shadow-xl"
-            >
-              進入房間
-            </button>
+          <div className={`transition-all duration-1000 w-full flex flex-col items-center space-y-4 ${storyStep >= storyLines.length ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
+            <div className="flex space-x-6">
+              <button
+                onClick={startPlaying}
+                className="px-12 py-4 bg-white text-slate-800 rounded-full font-bold tracking-widest hover:bg-slate-50 transition-all uppercase text-sm border-2 border-slate-200 shadow-xl"
+              >
+                進入房間
+              </button>
+              {hasSave && (
+                <button
+                  onClick={loadGame}
+                  className="px-12 py-4 bg-rose-600 text-white rounded-full font-bold tracking-widest hover:bg-rose-500 transition-all uppercase text-sm shadow-xl"
+                >
+                  繼續回憶
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -276,6 +330,7 @@ const App: React.FC = () => {
   return (
     <div className="h-screen w-screen bg-white relative overflow-hidden text-slate-900">
       <audio ref={audioRef} src={`${import.meta.env.BASE_URL}bgm.mp3`} autoPlay loop />
+
       {discoveryImageUrl && (
         <div
           className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-12 cursor-pointer animate-in fade-in duration-300"
@@ -373,6 +428,17 @@ const App: React.FC = () => {
           onUse={() => setState(prev => ({ ...prev, selectedItem: selectedExamineItem }))}
         />
       )}
+
+      {/* Save Button */}
+      <div className="absolute top-6 right-6 z-[60]">
+        <button
+          onClick={saveGame}
+          className="group flex items-center space-x-3 px-6 py-3 bg-white/80 hover:bg-white border border-slate-200 rounded-2xl shadow-sm transition-all hover:shadow-md hover:border-rose-200 text-slate-600 hover:text-rose-600 backdrop-blur-md pointer-events-auto"
+        >
+          <span className="text-lg group-hover:scale-110 transition-transform">💾</span>
+          <span className="font-bold tracking-[0.2em] text-xs uppercase">儲存進度</span>
+        </button>
+      </div>
     </div>
   );
 };
