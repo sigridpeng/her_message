@@ -31,12 +31,13 @@ const App: React.FC = () => {
     ending: EndingType.None,
     hasSeenCalendar: false,
     hasSeenChat: false,
+    hasSeenBookshelf: false,
     selectedItem: null,
   });
 
   const [storyStep, setStoryStep] = useState(0);
   const storyLines = [
-    "前一晚，我們吵了架...",
+    "前一晚，我覺得她有事瞞我，所以吵了架...",
     "而第二天，我前往她的住處，發現...",
     "她不見了...",
     "桌上遺留著我向她求婚的那枚戒指..."
@@ -68,6 +69,7 @@ const App: React.FC = () => {
 
   const [message, setMessage] = useState<{ title: string; content: string } | null>(null);
   const [selectedExamineItem, setSelectedExamineItem] = useState<ItemId | null>(null);
+  const [discoveryImageUrl, setDiscoveryImageUrl] = useState<string | null>(null);
   const [isCodeLockOpen, setIsCodeLockOpen] = useState(false);
   const [isChoiceOpen, setIsChoiceOpen] = useState(false);
   const [isLaptopOpen, setIsLaptopOpen] = useState(false);
@@ -86,6 +88,7 @@ const App: React.FC = () => {
       ending: EndingType.None,
       hasSeenCalendar: false,
       hasSeenChat: false,
+      hasSeenBookshelf: false,
       selectedItem: null,
     });
     setStoryStep(0);
@@ -93,6 +96,7 @@ const App: React.FC = () => {
     setIsCodeLockOpen(false);
     setIsLaptopOpen(false);
     setIsNightstandLockOpen(false);
+    setDiscoveryImageUrl(null);
   };
 
   const changeScene = (direction: 'next' | 'prev') => {
@@ -110,9 +114,13 @@ const App: React.FC = () => {
       case 'sofa': setMessage({ title: '沙發', content: '舒服的沙發，是她省錢了好一陣子才買下手的。' }); break;
       case 'window': setMessage({ title: '窗戶', content: '從這裡可以看到外面的街道，但現在只有灰濛濛的天空。' }); break;
       case 'plant1':
-        if (!state.inventory.includes('cabinet_key')) {
-          setState(prev => ({ ...prev, inventory: [...prev.inventory, 'cabinet_key'] }));
-          setMessage({ title: '獲得碎片', content: '【矮櫃鑰匙】\n藏在盆栽底下的鑰匙。' });
+        if (state.hasSeenBookshelf) {
+          if (!state.inventory.includes('cabinet_key')) {
+            setState(prev => ({ ...prev, inventory: [...prev.inventory, 'cabinet_key'] }));
+            setMessage({ title: '獲得碎片', content: '【矮櫃鑰匙】\n根據在書櫃發現的照片，妳在盆栽底下找到了這把鑰匙。' });
+          } else {
+            setMessage({ title: '盆栽', content: '鑰匙已經拿走了，泥土還有些鬆動。' });
+          }
         } else {
           setMessage({ title: '盆栽', content: '葉片還帶著淡淡的水氣。' });
         }
@@ -125,7 +133,7 @@ const App: React.FC = () => {
               isCabinetLocked: false,
               inventory: [...prev.inventory, 'heart_key']
             }));
-            setMessage({ title: '解鎖成功', content: '用鑰匙打開了矮櫃，在抽屜夾層發現了【心形小鑰匙】。' });
+            setMessage({ title: '解鎖成功', content: '用鑰匙打開了矮櫃，在抽屜夾層發現了【小鑰匙】。' });
           } else {
             setMessage({ title: '矮櫃', content: '門鎖住了，似乎需要特定的鑰匙。' });
           }
@@ -135,10 +143,7 @@ const App: React.FC = () => {
         break;
       case 'calendar':
         setState(prev => ({ ...prev, hasSeenCalendar: true }));
-        setMessage({ title: '月曆', content: '九月份的 21 號那天畫了一個小小的心。' });
-        if (!state.inventory.includes('handwritten_note')) {
-          setState(prev => ({ ...prev, inventory: [...prev.inventory, 'handwritten_note'] }));
-        }
+        setMessage({ title: '月曆', content: '九月份的 20 號，也就是今天，寫了請假，而21號則畫了一顆小小的愛心，原來她一直記得我的生日。' });
         break;
       case 'laptop':
         if (state.isLaptopLocked) {
@@ -148,47 +153,43 @@ const App: React.FC = () => {
         }
         break;
       case 'bookshelf':
-        if (!state.inventory.includes('memory_usb')) {
-          setState(prev => ({ ...prev, inventory: [...prev.inventory, 'memory_usb'] }));
-          setMessage({ title: '獲得碎片', content: '【記憶隨身碟】\n夾在書頁間的隨身碟。' });
-        } else setMessage({ title: '書櫃', content: '滿滿的書，記錄著這裡的時光。' });
+        setState(prev => ({ ...prev, hasSeenBookshelf: true }));
+        setDiscoveryImageUrl('/bookshelf_discovery.png');
         break;
       case 'drawer':
         if (!state.inventory.includes('birthday_card')) {
           setState(prev => ({ ...prev, inventory: [...prev.inventory, 'birthday_card'] }));
-          setMessage({ title: '獲得碎片', content: '【生日卡片】\n抽屜裡放著一張精緻的卡片。' });
+          setMessage({ title: '獲得卡片', content: '【生日卡片】\n抽屜裡放著一張精緻的卡片。' });
         } else {
-          setMessage({ title: '抽屜', content: '抽屜裡裝滿了文具和雜物，還有一疊沒寄出的信。' });
+          setMessage({ title: '抽屜', content: '抽屜裡裝滿了文具和雜物，但已經沒甚麼值得注意的。' });
         }
         break;
       case 'dairy':
-        if (!state.inventory.includes('test_report')) {
+        if (!state.inventory.includes('diary_page')) {
           if (state.selectedItem === 'heart_key') {
-            setState(prev => ({ ...prev, inventory: [...prev.inventory, 'test_report'] }));
-            setMessage({ title: '解鎖成功', content: '用心形小鑰匙打開了日記本，裡面夾著一張【檢驗報告單】。' });
+            setState(prev => ({ ...prev, inventory: [...prev.inventory, 'diary_page'] }));
+            setMessage({ title: '解鎖成功', content: '用小鑰匙打開了日記本，裡面夾著一張【日記的一頁】。' });
           } else {
             setMessage({ title: '日記本', content: '精緻的日記本，封面上嵌著一個心形的鎖孔。' });
           }
         } else {
-          setMessage({ title: '日記本', content: '最後的一頁日期停在昨天，上面寫著：「我不想讓你看到我虛弱的樣子。」' });
+          setMessage({ title: '日記本', content: '最後的一頁日期停在我們吵架的前一天。' });
         }
         break;
-      case 'bed': setMessage({ title: '床', content: '床鋪整理得很整齊，像是她隨時會回來睡下。' }); break;
+      case 'bed': setMessage({ title: '床', content: '床鋪整理得很整規，像是她隨時會回來睡下。' }); break;
       case 'photo': setMessage({ title: '合照', content: '那張照片裡，我們都笑得好燦爛。' }); break;
       case 'nightstand':
         if (state.isNightstandLocked) {
           setIsNightstandLockOpen(true);
         } else if (!state.inventory.includes('male_shirt')) {
           setState(prev => ({ ...prev, inventory: [...prev.inventory, 'male_shirt'] }));
-          setMessage({ title: '獲得碎片', content: '【男用襯衫】\n床頭櫃解開了，裡面靜靜躺著這件襯衫。' });
+          setMessage({ title: '獲得驚喜', content: '【男用襯衫】\n床頭櫃解開了，裡面靜靜躺著這件襯衫。' });
         } else {
-          setMessage({ title: '床頭櫃', content: '櫃面上放著一杯喝了一半的水，和幾顆感冒藥。' });
+          setMessage({ title: '床頭櫃', content: '已經沒有甚麼值得注意的了。' });
         }
         break;
       case 'bathroom_door': setMessage({ title: '浴室門', content: '鏡子蒙上了一層水蒸氣，似乎有人剛離開。' }); break;
       case 'movie_poster': setMessage({ title: '電影海報', content: '那是我們第一次約會看的電影，她一直把海報貼在牆上。' }); break;
-      case 'scale': setMessage({ title: '體重計', content: '妳總說自己重了，但在我心裡妳一直都很完美。' }); break;
-      case 'switch': setMessage({ title: '開關', content: '清脆的聲音在靜謐的房間迴盪。' }); break;
     }
   };
 
@@ -254,11 +255,11 @@ const App: React.FC = () => {
 
   if (state.ending !== EndingType.None) {
     const endings = {
-      [EndingType.Normal]: { title: 'NORMAL END', text: '生活依舊繼續，只是少了某些色彩。', icon: '🏙️' },
-      [EndingType.Bad1]: { title: 'BAD END 1', text: '我不該在那裡見到妳。信任的裂痕終究無法修補。', icon: '🌑' },
+      [EndingType.Normal]: { title: 'NORMAL END', text: '我沒能找到她，也許是我不夠了解她。', icon: '🏙️' },
+      [EndingType.Bad1]: { title: 'BAD END 1', text: '我依照通訊軟體的訊息找到了那個人，把情況推向最難以收拾的局面。', icon: '🌑' },
       [EndingType.Happy]: { title: 'HAPPY END', text: '在醫院的門口，我抱住了疲憊的妳。這一次，我們一起面對。', icon: '🌸' },
       [EndingType.Bad2]: { title: 'BAD END 2', text: '留下信的那刻，我以為我解脫了。', icon: '🍂' },
-      [EndingType.Perfect]: { title: 'PERFECT END', text: '穿著妳送我的襯衫，我在病房牽起妳的手。不論未來如何，這次我們不再分開。', icon: '✨' },
+      [EndingType.Perfect]: { title: 'PERFECT END', text: '穿著妳送我的襯衫，我在診間等著妳做完檢查。不論未來如何，這次我們不再分開。', icon: '✨' },
     };
     const ending = endings[state.ending as keyof typeof endings];
     return (
@@ -275,6 +276,17 @@ const App: React.FC = () => {
   return (
     <div className="h-screen w-screen bg-white relative overflow-hidden text-slate-900">
       <audio ref={audioRef} src="/bgm.mp3" autoPlay loop />
+      {discoveryImageUrl && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-12 cursor-pointer animate-in fade-in duration-300"
+          onClick={() => setDiscoveryImageUrl(null)}
+        >
+          <div className="max-w-4xl w-full h-full flex flex-col items-center justify-center">
+            <img src={discoveryImageUrl} alt="Discovery" className="max-w-full max-h-[80vh] object-contain shadow-2xl rounded-lg border-4 border-white/20" />
+            <p className="mt-8 text-white/60 text-xs font-bold tracking-[0.5em] uppercase">Click anywhere to close</p>
+          </div>
+        </div>
+      )}
       <div className="absolute top-0 left-0 right-0 p-6 text-center bg-gradient-to-b from-white/90 to-transparent z-10 pointer-events-none">
         <h1 className="text-xl font-black tracking-[0.4em] text-orange-800 uppercase italic drop-shadow-sm">
           {state.currentScene === SceneId.Entrance && 'Room Entrance'}
@@ -317,7 +329,7 @@ const App: React.FC = () => {
       )}
       {isChoiceOpen && (
         <ChoiceOverlay
-          hasTestReport={state.inventory.includes('test_report')}
+          hasDiaryPage={state.inventory.includes('diary_page')}
           hasMaleShirt={state.inventory.includes('male_shirt')}
           hasSeenChat={state.hasSeenChat}
           selectedItem={state.selectedItem}
@@ -344,6 +356,7 @@ const App: React.FC = () => {
       )}
       {isNightstandLockOpen && (
         <CodeLockModal
+          hint="密碼是我們決定在一起的日子"
           onUnlock={(code) => {
             if (code === '1225') {
               setState(prev => ({ ...prev, isNightstandLocked: false }));

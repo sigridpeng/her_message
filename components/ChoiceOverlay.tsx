@@ -2,7 +2,7 @@ import React from 'react';
 import { EndingType, ItemId } from '../types';
 
 interface ChoiceOverlayProps {
-  hasTestReport: boolean;
+  hasDiaryPage: boolean;
   hasMaleShirt: boolean;
   hasSeenChat: boolean;
   selectedItem: ItemId | null;
@@ -10,7 +10,7 @@ interface ChoiceOverlayProps {
 }
 
 const ChoiceOverlay: React.FC<ChoiceOverlayProps> = ({
-  hasTestReport,
+  hasDiaryPage,
   hasMaleShirt,
   hasSeenChat,
   selectedItem,
@@ -22,7 +22,7 @@ const ChoiceOverlay: React.FC<ChoiceOverlayProps> = ({
         <h2 className="text-slate-400 font-black tracking-[0.5em] uppercase text-[10px] mb-10">Decision Point</h2>
         <div className="space-y-4">
 
-          {hasTestReport && (
+          {hasDiaryPage && (
             <button
               onClick={() => {
                 // Implicit logic: if shirt is equipped, trigger Perfect ending
@@ -62,6 +62,16 @@ const ChoiceOverlay: React.FC<ChoiceOverlayProps> = ({
               </div>
             </button>
           )}
+
+          <button
+            onClick={() => onChoice(EndingType.Bad2)}
+            className="group flex items-center p-5 bg-slate-50 hover:bg-white border border-slate-100 hover:border-red-400 rounded-2xl transition-all shadow-sm hover:shadow-md w-full"
+          >
+            <span className="text-xl mr-6 group-hover:scale-125 transition-transform">🍂</span>
+            <div className="text-left">
+              <p className="text-slate-700 font-black tracking-widest text-xs uppercase">留下分手信，直接離開</p>
+            </div>
+          </button>
 
           <button
             onClick={() => onChoice(EndingType.None)}

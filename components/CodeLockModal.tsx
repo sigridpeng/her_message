@@ -47,9 +47,6 @@ const CodeLockModal: React.FC<CodeLockModalProps> = ({ onUnlock, onClose }) => {
         >
           Cancel
         </button>
-        <p className="mt-8 text-[10px] text-slate-500 text-center italic tracking-widest uppercase">
-          Hint: A date drawn with a heart on the calendar.
-        </p>
       </div>
     </div>
   );

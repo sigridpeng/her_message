@@ -1,5 +1,5 @@
 
-export type ItemId = 'cabinet_key' | 'heart_key' | 'memory_usb' | 'handwritten_note' | 'test_report' | 'birthday_card' | 'male_shirt';
+export type ItemId = 'cabinet_key' | 'heart_key' | 'diary_page' | 'birthday_card' | 'male_shirt';
 
 export interface Item {
   id: ItemId;
@@ -42,5 +42,6 @@ export interface GameState {
   ending: EndingType;
   hasSeenCalendar: boolean;
   hasSeenChat: boolean;
+  hasSeenBookshelf: boolean;
   selectedItem: ItemId | null;
 }

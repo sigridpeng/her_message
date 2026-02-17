@@ -51,13 +51,25 @@ const LaptopModal: React.FC<LaptopModalProps> = ({ isLocked, onUnlockFolder, onV
                         </div>
                         <div className="flex-1 space-y-4 overflow-y-auto pr-2">
                             <div className="bg-slate-100 p-3 rounded-2xl max-w-[80%] self-start text-sm">
-                                最近還好嗎？那件襯衫我看過了，設計真的很不錯。
+                                上次跟你提到的，那個牌子的襯衫你買了嗎？
                             </div>
                             <div className="bg-slate-100 p-3 rounded-2xl max-w-[80%] self-start text-sm">
-                                我覺得如果是送給他的話，這件襯衫會是個很棒的驚喜。
+                                我覺得質料很好，誰收到都會很開心的。
                             </div>
                             <div className="bg-rose-100 p-3 rounded-2xl max-w-[80%] self-end ml-auto text-sm text-rose-800">
-                                謝謝學長！我也是這麼覺得，他一定會喜歡的。
+                                我也是這麼覺得，我明天下班就要偷偷去買了。
+                            </div>
+                            <div className="bg-slate-100 p-3 rounded-2xl max-w-[80%] self-start text-sm">
+                                你要買什麼顏色的？
+                            </div>
+                            <div className="bg-rose-100 p-3 rounded-2xl max-w-[80%] self-end ml-auto text-sm text-rose-800">
+                                我想買深藍色的，你覺得呢？
+                            </div>
+                            <div className="bg-slate-100 p-3 rounded-2xl max-w-[80%] self-start text-sm">
+                                好眼光！我也有一件同樣色系的，是很熱賣的顏色。
+                            </div>
+                            <div className="bg-rose-100 p-3 rounded-2xl max-w-[80%] self-end ml-auto text-sm text-rose-800">
+                                真的嗎？那我就放心了，謝謝學長！
                             </div>
                         </div>
                     </div>
@@ -107,14 +119,14 @@ const LaptopModal: React.FC<LaptopModalProps> = ({ isLocked, onUnlockFolder, onV
                     return (
                         <div className="p-12 h-full flex flex-col items-center justify-center bg-white">
                             <div className="text-6xl mb-6">🔒</div>
-                            <h3 className="font-bold text-lg mb-4 text-slate-800 tracking-widest">PRIVATE FOLDER</h3>
-                            <p className="text-xs text-slate-400 mb-8 italic">Please enter the administrator's name.</p>
+                            <h3 className="font-bold text-lg mb-4 text-slate-800 tracking-widest uppercase">PRIVATE FOLDER</h3>
+                            <p className="text-xs text-slate-400 mb-8 italic">Please enter the password.</p>
                             <div className="flex space-x-2">
                                 <input
                                     type="text"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="NAME"
+                                    placeholder="password"
                                     className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-center font-black tracking-widest uppercase focus:ring-2 focus:ring-rose-500 outline-none"
                                 />
                                 <button
@@ -134,19 +146,19 @@ const LaptopModal: React.FC<LaptopModalProps> = ({ isLocked, onUnlockFolder, onV
                             <button onClick={() => setCurrentView('desktop')} className="mr-4 text-slate-400 hover:text-slate-800">← Back</button>
                             <h3 className="font-bold text-slate-800">Folder: Our Memories</h3>
                         </div>
-                        <div className="flex flex-col items-center space-y-6">
-                            <div className="w-full aspect-video bg-slate-100 rounded-3xl overflow-hidden relative border-4 border-white shadow-xl">
+                        <div className="flex-1 overflow-y-auto pr-2 flex flex-col items-center space-y-6">
+                            <div className="w-full aspect-video bg-slate-100 rounded-3xl overflow-hidden relative border-4 border-white shadow-xl shrink-0">
                                 <img src="/bed.png" className="w-full h-full object-cover blur-[2px] opacity-60" />
                                 <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-800">
                                     <div className="text-4xl mb-2">📸</div>
-                                    <p className="font-black text-xl tracking-tighter">PHOTO_20261225_FINAL.JPG</p>
+                                    <p className="font-black text-xl tracking-tighter">PHOTO_20201225_FINAL.JPG</p>
                                     <p className="text-[10px] mt-4 font-bold bg-white/80 px-4 py-1 rounded-full text-rose-500 tracking-[0.3em]">
                                         CREATION DATE: 1225
                                     </p>
                                 </div>
                             </div>
-                            <p className="text-center text-xs text-slate-500 italic px-8">
-                                這是我準備給你的驚喜，就在那個我們約定好要慶祝的地方... 床頭櫃的密碼是我們未來的開始。
+                            <p className="text-center text-xs text-slate-500 italic px-8 pb-4">
+                                床頭櫃的密碼是我們決定在一起的日子。
                             </p>
                         </div>
                     </div>
