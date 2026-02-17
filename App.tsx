@@ -11,10 +11,10 @@ import ItemDetailModal from './components/ItemDetailModal';
 import LaptopModal from './components/LaptopModal';
 
 const STATIC_SCENES: Record<SceneId, string> = {
-  [SceneId.Entrance]: '/entrance.png',
-  [SceneId.Desk]: '/desk.png',
-  [SceneId.Bed]: '/bed.png',
-  [SceneId.Bathroom]: '/bathroom.png',
+  [SceneId.Entrance]: `${import.meta.env.BASE_URL}entrance.png`,
+  [SceneId.Desk]: `${import.meta.env.BASE_URL}desk.png`,
+  [SceneId.Bed]: `${import.meta.env.BASE_URL}bed.png`,
+  [SceneId.Bathroom]: `${import.meta.env.BASE_URL}bathroom.png`,
 };
 
 const App: React.FC = () => {
@@ -154,7 +154,7 @@ const App: React.FC = () => {
         break;
       case 'bookshelf':
         setState(prev => ({ ...prev, hasSeenBookshelf: true }));
-        setDiscoveryImageUrl('/bookshelf_discovery.png');
+        setDiscoveryImageUrl(`${import.meta.env.BASE_URL}bookshelf_discovery.png`);
         break;
       case 'drawer':
         if (!state.inventory.includes('birthday_card')) {
@@ -196,11 +196,11 @@ const App: React.FC = () => {
   if (state.phase === GamePhase.Title) {
     return (
       <div className="h-screen w-screen bg-slate-100 flex items-center justify-center relative overflow-hidden">
-        <audio ref={audioRef} src="/bgm.mp3" autoPlay loop />
+        <audio ref={audioRef} src={`${import.meta.env.BASE_URL}bgm.mp3`} autoPlay loop />
         <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10" />
         <div
           className="absolute inset-0 bg-cover bg-center opacity-40"
-          style={{ backgroundImage: "url('/entrance.png')" }}
+          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}entrance.png')` }}
         />
         <div className="relative z-20 text-center flex flex-col items-center">
           <h1 className="text-8xl font-black mb-12 text-rose-600 tracking-[0.2em] italic uppercase drop-shadow-2xl magical-font">
@@ -220,12 +220,12 @@ const App: React.FC = () => {
   if (state.phase === GamePhase.Story) {
     return (
       <div className="h-screen w-screen bg-[#FDF5E6] flex flex-col items-center justify-center p-8 transition-all duration-1000 relative overflow-hidden">
-        <audio ref={audioRef} src="/bgm.mp3" autoPlay loop />
+        <audio ref={audioRef} src={`${import.meta.env.BASE_URL}bgm.mp3`} autoPlay loop />
         {/* Background Ring */}
         <div
           className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[4000ms] ease-in-out pointer-events-none`}
           style={{
-            backgroundImage: "url('/ring.png')",
+            backgroundImage: `url('${import.meta.env.BASE_URL}ring.png')`,
             opacity: storyStep >= storyLines.length ? 0.4 : 0
           }}
         />
@@ -264,7 +264,7 @@ const App: React.FC = () => {
     const ending = endings[state.ending as keyof typeof endings];
     return (
       <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-950 text-white p-8 text-center">
-        <audio ref={audioRef} src="/bgm.mp3" autoPlay loop />
+        <audio ref={audioRef} src={`${import.meta.env.BASE_URL}bgm.mp3`} autoPlay loop />
         <div className="text-7xl mb-8 animate-float">{ending?.icon}</div>
         <h1 className="text-5xl font-black mb-6 text-rose-300 tracking-tighter uppercase italic">{ending?.title}</h1>
         <p className="text-xl text-slate-300 mb-10 max-w-lg leading-loose italic">{ending?.text}</p>
@@ -275,7 +275,7 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen w-screen bg-white relative overflow-hidden text-slate-900">
-      <audio ref={audioRef} src="/bgm.mp3" autoPlay loop />
+      <audio ref={audioRef} src={`${import.meta.env.BASE_URL}bgm.mp3`} autoPlay loop />
       {discoveryImageUrl && (
         <div
           className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-12 cursor-pointer animate-in fade-in duration-300"
@@ -356,7 +356,6 @@ const App: React.FC = () => {
       )}
       {isNightstandLockOpen && (
         <CodeLockModal
-          hint="密碼是我們決定在一起的日子"
           onUnlock={(code) => {
             if (code === '1225') {
               setState(prev => ({ ...prev, isNightstandLocked: false }));

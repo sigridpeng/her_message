@@ -148,7 +148,7 @@ const LaptopModal: React.FC<LaptopModalProps> = ({ isLocked, onUnlockFolder, onV
                         </div>
                         <div className="flex-1 overflow-y-auto pr-2 flex flex-col items-center space-y-6">
                             <div className="w-full aspect-video bg-slate-100 rounded-3xl overflow-hidden relative border-4 border-white shadow-xl shrink-0">
-                                <img src="/bed.png" className="w-full h-full object-cover blur-[2px] opacity-60" />
+                                <img src={`${import.meta.env.BASE_URL}bed.png`} className="w-full h-full object-cover blur-[2px] opacity-60" />
                                 <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-800">
                                     <div className="text-4xl mb-2">📸</div>
                                     <p className="font-black text-xl tracking-tighter">PHOTO_20201225_FINAL.JPG</p>
